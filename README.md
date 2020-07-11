@@ -2,7 +2,7 @@
 
 
 ## Description 
-This is a backend server.js app that I wrote using Express.js that allows users to take, save and delete notes. This material is designed to meet the standards set by the GT Full-stack program homework requirements. It is built using the languages mentioned and customized based on mockups in class. 
+This is a CLI Employee Tracker app that I wrote using node.js and MySQL that allows users to save and keep track of employee information. This material is designed to meet the standards set by the GT Full-stack program homework requirements. It is built using the languages mentioned and customized based on mockups in class. 
 
 Any feedback can be provided via email at [kalebgarrison@gmail.com](mailto:kalebgarrison@gmail.com).
 
@@ -17,17 +17,19 @@ Any feedback can be provided via email at [kalebgarrison@gmail.com](mailto:kaleb
 ## Installation
 
 1. Clone the repo on github. 
-2. Open the server.js file. 
-3. Run 'npm install'
-4. Then run the command 'node server.js' in the command line. 
-5. Then click on the link provided
+2. Open the employeeTracker.js file. 
+3. Add your MySQL password in the "Password"section on line 15.
+4. Run 'npm install'.
+5. Then run the command 'node employeeTracker.js' in the command line. 
+6. Follow the prompts.
+
 ## Usage 
 
-[Heroku Published Site](https://evening-chamber-40846.herokuapp.com/)
+[Video of the Application Running](https://drive.google.com/file/d/1hitt5Xgr1b6usoNE6ycMgOSpZgvYGpBf/view)
 
 [GitHub Repo Site](https://github.com/kalebgarrison/gt-note-taker)
 
-![alt text](public/assets/images/notetaker.png) 
+![alt text](assets/images/tracker.png) 
 
 
 
