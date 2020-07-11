@@ -96,8 +96,6 @@ function allEmployees() {
   connection.query(allEmployees, (err, res) => {
     if (err) throw err;
 
-    console.log(res);
-
     console.table(res);
     startTracker();
   });
@@ -175,6 +173,7 @@ function employeesByRoles() {
 
   connection.query(byRole, (err, res) => {
     if (err) throw err;
+    console.table(res);
     startTracker();
   });
 }
@@ -207,8 +206,6 @@ function addRole() {
         "INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)",
         [res.title, res.salary, res.department],
         (err, data) => {
-          if (err) throw err;
-          console.table(data);
           if (err) throw err;
           startTracker();
         }
