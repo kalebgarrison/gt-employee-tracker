@@ -27,7 +27,7 @@ Any feedback can be provided via email at [kalebgarrison@gmail.com](mailto:kaleb
 
 [Video of the Application Running](https://drive.google.com/file/d/1hitt5Xgr1b6usoNE6ycMgOSpZgvYGpBf/view)
 
-[GitHub Repo Site](https://github.com/kalebgarrison/gt-note-taker)
+[GitHub Repo Site](https://github.com/kalebgarrison/gt-employee-tracker)
 
 ![alt text](assets/images/tracker.png) 
 
