@@ -35,15 +35,13 @@ function startTracker() {
       message: "What would you like to do?",
       choices: [
         "View all employees",
-        "View all employees by department",
-        "View all employees by manager",
+        "View all departments",
+        "View all roles",
         "Add employee",
         "Add role",
         "Add department",
         "Update employee role",
-        "Update employee manager",
-        "Remove employee",
-        "View all roles",
+        "Exit",
       ],
     })
     .then((choice) => {
@@ -51,11 +49,11 @@ function startTracker() {
         case "View all employees":
           allEmployees();
           break;
-        case "View all employees by department":
+        case "View all departments":
           employeesByDepartment();
           break;
-        case "View all employees by manager":
-          employeesByManager();
+        case "View all roles":
+          employeesByRoles();
           break;
         case "Add employee":
           addEmployee();
@@ -78,19 +76,22 @@ function startTracker() {
         case "View all roles":
           viewAllRoles();
           break;
+        case "Exit":
+          connection.end();
+          break;
       }
     });
 }
 
+// function to show all employees
+
 function allEmployees() {
-  const allEmployees = `SELECT employee.id, employee.first_name AS First, employee.last_name AS Last, role.title AS Title, department.name AS Department, role.salary AS Salary, employee.manager_id AS Manager
-    FROM employee 
-    LEFT JOIN department ON
-    department.name = department.name
-    LEFT JOIN role ON
-    role.title = role.title
-    AND
-    role.salary = role.salary;`;
+  const allEmployees = `SELECT employee.id, employee.first_name AS first, employee.last_name AS last, role.title AS title, department.name AS department, role.salary, employee.manager_id
+  FROM employee
+  LEFT JOIN role 
+  ON employee.role_id = role.id
+  LEFT JOIN department 
+  ON role.department_id = department.id;`;
 
   connection.query(allEmployees, (err, res) => {
     if (err) throw err;
@@ -98,8 +99,11 @@ function allEmployees() {
     console.log(res);
 
     console.table(res);
+    startTracker();
   });
 }
+
+// This allows you to view all the departments
 
 function employeesByDepartment() {
   const byDepartment = `SELECT department.name FROM department;`;
@@ -107,9 +111,17 @@ function employeesByDepartment() {
   connection.query(byDepartment, (err, res) => {
     if (err) throw err;
 
-    console.log(res);
-
     console.table(res);
+
+    startTracker();
+  });
+}
+// This allows you to add employees to your system
+
+function addEmployee() {
+  connection.query(`SELECT * FROM role`, (err, res) => {
+    if (err) throw err;
+    //New prompts:
     inquirer
       .prompt([
         {
@@ -118,22 +130,139 @@ function employeesByDepartment() {
           choices: function () {
             const choiceArray = [];
             for (let i = 0; i < res.length; i++) {
-              choiceArray.push(res[i].name);
+              choiceArray.push(res[i].id);
             }
             return choiceArray;
           },
-          message: "Which department would you like to search in?",
+          message: "Please select the employee's role ID",
+        },
+        {
+          name: "firstName",
+          type: "input",
+          message: "What is the employee's first name?",
+        },
+        {
+          name: "lastName",
+          type: "input",
+          message: "What is the employee's last name?",
+        },
+        {
+          name: "manager",
+          type: "input",
+          message: "What is the employee's manager ID?",
         },
       ])
-      .then(function (answer) {
-        // get the information of the chosen item
-        let chosenItem;
-        for (let i = 0; i < res.length; i++) {
-          if (res[i].name === answer.choice) {
-            chosenItem = res[i];
+
+      .then(function (res) {
+        connection.query(
+          "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)",
+          [res.firstName, res.lastName, res.choice, res.manager],
+          (err, data) => {
+            if (err) throw err;
+            console.table("Successfully Inserted");
+            if (err) throw err;
+            startTracker();
           }
-          console.log(chosenItem)
-        }
+        );
       });
   });
+}
+
+// This function lets you view all the role titles
+
+function employeesByRoles() {
+  const byRole = `SELECT role.title FROM role;`;
+
+  connection.query(byRole, (err, res) => {
+    if (err) throw err;
+    startTracker();
+  });
+}
+
+// function to add roles
+
+function addRole() {
+  //New prompts:
+  inquirer
+    .prompt([
+      {
+        name: "title",
+        type: "input",
+        message: "What title would you like to add?",
+      },
+      {
+        name: "salary",
+        type: "number",
+        message: "What is the salary associated with this title?",
+      },
+      {
+        name: "department",
+        type: "number",
+        message: "What is the department ID?",
+      },
+    ])
+
+    .then(function (res) {
+      connection.query(
+        "INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)",
+        [res.title, res.salary, res.department],
+        (err, data) => {
+          if (err) throw err;
+          console.table(data);
+          if (err) throw err;
+          startTracker();
+        }
+      );
+    });
+}
+
+// function to add departments
+
+function addDepartment() {
+  inquirer
+    .prompt([
+      {
+        name: "name",
+        type: "input",
+        message: "What department name would you like to add?",
+      },
+    ])
+
+    .then(function (res) {
+      connection.query(
+        "INSERT INTO department (name) VALUES (?)",
+        [res.name],
+        (err, data) => {
+          if (err) throw err;
+          startTracker();
+        }
+      );
+    });
+}
+
+// Function that updates employee role
+
+function updateEmployee() {
+  inquirer
+    .prompt([
+      {
+        message: "List the first name of the employee you would to update?",
+        type: "input",
+        name: "name",
+      },
+      {
+        message: "enter the new role ID:",
+        type: "number",
+        name: "role_id",
+      },
+    ])
+    .then(function (response) {
+      connection.query(
+        "UPDATE employee SET role_id = ? WHERE first_name = ?",
+        [response.role_id, response.name],
+        function (err, data) {
+          startTracker();
+        }
+      );
+    });
 }
